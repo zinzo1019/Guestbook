@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="./jquery-3.4.1.min.js"></script>
+
+    <link rel="stylesheet" href="./bootstrapt/css/bootstrap.min.css" />
+    <script src="./bootstrapt/js/bootstrap.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<th:block th:replace="~{/layouts/basic :: setContent(~{this :: content})}">
+
+    <th:block th:fragment="content">
+        <h1 class="mt-4">GuestBook List Page
+            <span>
+            <a th:href="@{/guestbook/register}">
+                <button type="button" class="btn btn-outline-primary">REGISTER</button>
+            </a>
+        </span>
+        </h1>
+
+<!--        검색창-->
+        <form action="/guestbook/list" method="get" id="searchForm">
+
+            <div class="input-group">
+                <input type="hidden" name="page" value="1">
+                <div class="input-group-prepend">
+                    <select class="form-select" name="type">
+
+                        <option th:selected="${pageRequestDTO.type == null}">-----</option>
+                        <option value="t" th:selected="${pageRequestDTO.type == 't'}">title</option>
+                        <option value="c" th:selected="${pageRequestDTO.type == 'c'}">content</option>
+                        <option value="w" th:selected="${pageRequestDTO.type == 'w'}">writer</option>
+                        <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">title & content</option>
+                        <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">title & content & writer</option>
+
+                    </select>
+                </div>
+
+                <input class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+
+                <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-online-secondary btn-search" type="button">Search</button>
+                    <button class="btn btn-online-secondary btn-clear" type="button">Clear</button>
+                </div>
+
+            </div>
+        </form>
+
+<!--        목록-->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Writer</th>
+                <th scope="col">Regdate</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dto : ${result.dtoList}">
+                <th scope="row">
+                    <a th:href="@{/guestbook/read(gno = ${dto.gno}, page = ${result.page},
+                    type= ${pageRequestDTO.type}, keyword= ${pageRequestDTO.keyword})}">
+                        [[${dto.gno}]]
+                    </a>
+                </th>
+                <td>[[${dto.title}]]</td>
+                <td>[[${dto.writer}]]</td>
+                <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+            </tr>
+            </tbody>
+        </table>
+
+<!--        페이지 이동-->
+        <ul class="pagination h-100 justify-content-center align-items-center">
+
+            <li class="page-item" th:if="${result.prev}">
+                <a class="page-link" th:href="@{/guestbook/list(page= ${result.start -1},
+                type= ${pageRequestDTO.type}, keyword= ${pageRequestDTO.keyword})}" tabindex="-1">Previous</a>
+            </li>
+
+            <li th:class=" 'page-item' + ${result.page == page?'active':''} "
+                th:each="page: ${result.pageList}">
+                <a class="page-link" th:href="@{/guestbook/list(page=${page}, size=${result.size},
+                type= ${pageRequestDTO.type}, keyword= ${pageRequestDTO.keyword})}">
+                    [[${page}]]
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${result.next}">
+                <a class="page-link" th:href="@{/guestbook/list(page=${result.end + 1},
+                type= ${pageRequestDTO.type}, keyword= ${pageRequestDTO.keyword})}">Next</a>
+            </li>
+        </ul>
+
+        <!--        https://getbootstrap.com/docs/4.2/components/modal/-->
+        <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Modal body text goes here.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+
+            var msg = [[${msg}]];
+
+            console.log("gno: " + msg);
+
+            if(msg) {
+                $(".modal").modal();
+            }
+
+            var searchForm = $("#searchForm");
+
+            // 검색 버튼 클릭
+            $(".btn-search").click(function (e) {
+                searchForm.submit();
+            });
+
+            $(".btn-clear").click(function (e) {
+                searchForm.empty().submit();
+            });
+
+        </script>
+
+    </th:block>
+
+</th:block>
+
+</body>
+</html>

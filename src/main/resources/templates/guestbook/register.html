@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<th:block th:replace="~{/layouts/basic :: setContent(~{this :: content})}">
+
+    <th:block th:fragment="content">
+
+        <h1 class="mt-4">Guestbook Register Page</h1>
+
+        <form th:action="@{/guestbook/register}" th:method="post">
+
+            <div class="form-group">
+                <label>Title</label>
+                <input th:type="text" class="form-control" name="title" placeholder="Enter Title" autocomplete="off">
+            </div>
+            <div></div>
+
+             <div class="form-group">
+                <label>Content</label>
+                 <textarea th:type="text" rows="5" class="form-control" name="content" placeholder="Enter Content" autocomplete="off"></textarea>
+            </div>
+            <div></div>
+
+             <div class="form-group">
+                <label>Writer</label>
+                 <input th:type="text" class="form-control" name="writer" placeholder="Enter Writer" autocomplete="off">
+             </div>
+
+            <button type="submit" class="btn btn-primary">submit</button>
+
+        </form>
+
+    </th:block>
+
+</th:block>
+
+</body>
+</html>
